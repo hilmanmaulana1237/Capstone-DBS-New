@@ -1,0 +1,24 @@
+# Node modules
+node_modules/
+npm-debug.log*
+
+# Python & Environment
+venv/
+__pycache__/
+*.pyc
+.env
+
+# Database (Secure persistent data should not be uploaded)
+*.db
+mindtrack.db
+
+# Machine Learning weights
+*.keras
+*.h5
+scaler_mean.npy
+scaler_scale.npy
+class_names.npy
+
+# OS Files
+.DS_Store
+Thumbs.db

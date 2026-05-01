@@ -1,0 +1,44 @@
+﻿Dokumen Project Plan
+Coding Camp 2026 powered by DBS Foundation
+
+INSTRUKSI
+1. Hapus semua bagian deskripsi/instruksi dalam setiap bab, termasuk instruksi ini. 
+2. Setiap grup/individu hanya diperbolehkan untuk submit project plan sebanyak 1x oleh salah satu anggota yang dijadikan perwakilan.
+3. Problem Statement adalah deskripsi permasalahan atau issue yang akan diselesaikan atau kondisi yang akan diperbaiki. Umumnya hal ini diselesaikan atau berisi pertanyaan 5W+1H (What, When, Why, Where, Who, How). Syarat pertama menyelesaikan permasalahan adalah mengerti dengan jelas kondisi dan latar belakang.
+4. Research Question adalah pertanyaan atau hipotesis yang akan dibuktikan dalam percobaan/riset. Memilih research question yang tepat akan memudahkan Anda menyelesaikan riset. Sebuah penyelesaian masalah kemungkinan besar membutuhkan pengumpulan data, analisa, serta metode penyelesaian yang bervariasi. Research Question yang baik biasanya mencakup pertanyaan-pertanyaan yang sangat spesifik dan dalam. 
+5. Perhatikan tata cara penulisan berikut:
+Font                        : Open Sans
+Ukuran font        : 12
+Spasi                        : 1,5
+Format file                : .pdf
+6. Format penamaan file: Project Plan - ID Grup.pdf
+________________
+Dokumen Project Plan
+Coding Camp 2026 powered by DBS Foundation
+
+
+ID Tim Capstone Project        : [Masukkan ID Grup Capstone]
+Tema Capstone                : [Masukkan tema capstone yang dikerjakan]
+Nama/Judul Proyek        : [Masukkan judul proyek yang dikerjakan]
+List Anggota                : 
+   1. (ID Peserta 1) - (Nama Anggota 1)- (Learning Path 1) - [Aktif/Tidak Aktif]
+   2. (ID Peserta 2) - (Nama Anggota 2)- (Learning Path 2) - [Aktif/Tidak Aktif]
+   3. (ID Peserta 3) - (Nama Anggota 3)- (Learning Path 3) - [Aktif/Tidak Aktif]
+   4. (ID Peserta 4) - (Nama Anggota 4)- (Learning Path 4) - [Aktif/Tidak Aktif]
+   5. (ID Peserta 5) - (Nama Anggota 5)- (Learning Path 5) - [Aktif/Tidak Aktif]
+
+
+   1. Ringkasan Eksekutif
+Deskripsikan secara singkat (maks. 2000 karakter) tentang proyek yang akan dikembangkan. Ringkasan eksekutif ini setidaknya mencakup beberapa indikator seperti: Problem Statement, Research Questions, Latar Belakang, dan mengapa tim Anda memilih proyek ini. 
+Try to build a painkiller instead of a vitamin. Pastikan proyek yang akan kalian kembangkan dapat digunakan dengan baik serta memberikan manfaat secara maksimal khususnya untuk perusahaan. Jika merasa kurang yakin dengan proyek yang akan dikembangkan, kalian dapat menggunakan praktek design thinking atau alternatif sejenis.
+   2. Cakupan Proyek dan Hasil Kerja
+Garis besar batas-batas proyek dan deskripsi tentang bagaimana tim Anda akan memecahkan tugas dan cakupan tanggung jawab untuk setiap individu dalam tim.
+Cakupan proyek dan milestone untuk memastikan proyek dapat di delivery pada waktu yang sesuai. Cakupan detail harian disarankan, namun cakupan mingguan juga diperbolehkan. Mohon pastikan bahwa cakupan proyek ini memiliki waktu pengerjaan 4-5 minggu.
+      3. Jadwal Pengerjaan
+Penjadwalan proyek dan milestone (umumnya menggunakan gantt chart atau tabel). Pastikan jadwal ini telah disepakati oleh anggota tim. Pastikan untuk saling mengingatkan antar anggota tim di sepanjang program ini. Jika perlu gunakan Google Calendar sebagai pengingat. Meetup harian dan progress report/monitoring  sangat disarankan untuk memantau progress dari pekerjaan yang dilakukan oleh setiap anggota tim.
+      4. Uraian Rencana Penugasan/Job Desk Setiap Learning Path
+Silakan uraikan secara ringkas, bagaimana rencana penugasan yang diberikan pada masing-masing learning path anggota Anda. 
+         5. Sumber Daya Proyek
+Sumber daya atau resource yang diperlukan dalam pengerjaan proyek: Bahasa Pemrograman,Framework, API, cloud backend, dataset, paper/journals/articles, serta sumber daya lainnya yang diperlukan. Jelaskan fungsi dari setiap sumber daya/tools yang akan digunakan secara singkat namun jelas fungsinya.
+         6. Rencana Manajemen Risiko dan Isu
+Hasil identifikasi terhadap faktor-faktor yang dapat menjadi penyebab proyek gagal maupun tertunda. Tim dapat menggunakan analisis SWOT ataupun risk management framework untuk mengidentifikasi dan mencari solusi atas penyelesaian isu yang mungkin terjadi selama pengerjaan proyek ini.
