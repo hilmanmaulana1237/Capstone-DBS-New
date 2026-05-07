@@ -39,17 +39,17 @@ Gunakan panduan (blueprint) di bawah ini untuk menyusun slide Anda di Canva atau
 ## 🧠 SLIDE 5: Keunggulan Kecerdasan Buatan (AI)
 **Tujuan:** Pamer pencapaian teknis AI yang melampaui batas Capstone.
 *   **Teks:**
-    *   Arsitektur: TensorFlow Functional API
-    *   Inovasi: **Custom Attention Layer**
-    *   Performa Akurasi: **92.00%**
-*   **Visual:** Tampilkan gambar *Confusion Matrix* yang membuktikan model bisa menebak "Insomnia" dan "Sleep Apnea" dengan akurat. Bisa juga tambahkan ikon otak bercahaya.
+    *   **Core AI:** TensorFlow Deep Learning (Akurasi: 92.00%)
+    *   **Inovasi:** Custom Attention Layer
+    *   **Generative AI:** Integrasi LLM DeepSeek V4 (OpenRouter) untuk konsultasi medis adaptif.
+*   **Visual:** Tampilkan gambar *Confusion Matrix* yang membuktikan model akurat, berdampingan dengan logo/ikon chat DeepSeek AI.
 
 ## ⚙️ SLIDE 6: Arsitektur Sistem (Tech Stack)
 **Tujuan:** Memperlihatkan bahwa aplikasi ini dibangun dengan solid dan siap produksi.
 *   **Teks:**
     *   **Frontend:** React, Vite, Tailwind CSS (Vercel)
     *   **Backend:** Express.js, SQLite, JWT (Render)
-    *   **AI Engine:** FastAPI Python (Railway/Render)
+    *   **AI Engine:** FastAPI (Railway) & DeepSeek LLM API (OpenRouter)
 *   **Visual:** Buat sebuah diagram alur sederhana (Mind Map / Flowchart). Panah dari User -> Web Frontend -> Express Backend -> FastAPI (AI).
 
 ## ⚔️ SLIDE 7: Analisis Kompetitor (Perbandingan)
@@ -58,6 +58,7 @@ Gunakan panduan (blueprint) di bawah ini untuk menyusun slide Anda di Canva atau
     | Fitur | MindTrack | Aplikasi Smartwatch |
     | :--- | :---: | :---: |
     | AI Prediksi Medis | ✅ Ya (Deep Learning) | ❌ Hanya *Tracking* Angka |
+    | AI Chat Konsultan | ✅ Ya (DeepSeek LLM) | ❌ Tidak Ada |
     | Harga | ✅ Gratis (Web) | ❌ Harus Beli Perangkat Mahal |
     | Skala Perusahaan (B2B) | ✅ Ya (Dashboard) | ❌ Hanya Personal |
 
@@ -74,7 +75,7 @@ Gunakan panduan (blueprint) di bawah ini untuk menyusun slide Anda di Canva atau
 
 ## 🎥 SLIDE 9: Demo Aplikasi (Produk Final)
 **Tujuan:** Pembuktian bahwa kode berjalan dengan baik (No Crash).
-*   **Visual Penuh:** Sematkan **Video Screen Record** (maksimal 1-2 menit tanpa suara) yang menampilkan seseorang mengisi form asesmen dan hasil prediksinya keluar.
+*   **Visual Penuh:** Sematkan **Video Screen Record** (maksimal 1-2 menit tanpa suara) yang menampilkan seseorang mengisi form asesmen, mendapatkan hasil prediksi, lalu berinteraksi dengan **Kotak Chat Generative AI** di bawahnya.
 *   *Catatan:* Tidak perlu teks, biarkan Agung berbicara langsung untuk menjelaskan video yang sedang diputar.
 
 ## 🎯 SLIDE 10: Penutup & Tautan

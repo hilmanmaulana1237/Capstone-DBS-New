@@ -23,7 +23,7 @@ Di era modern yang berjalan serba cepat, mahasiswa dan pekerja profesional mengh
 
 Menjawab **Problem Statement** tersebut, kami mengembangkan **MindTrack**, sebuah platform web cerdas berbasis AI yang dirancang sebagai instrumen deteksi dini preventif dan non-invasif. MindTrack mampu menganalisis pola gaya hidup harian pengguna—termasuk durasi tidur, aktivitas fisik, detak jantung harian, jumlah langkah kaki, dan tingkat stres subyektif—untuk mengklasifikasikan risiko gangguan tidur kritis (seperti Insomnia dan Sleep Apnea) menggunakan algoritma *Deep Learning*. Tidak hanya melayani individu, platform ini juga memuat *Dashboard Analytics* komprehensif bagi pemangku kepentingan (misal: divisi HR perusahaan) untuk memantau tren kesehatan mental dalam suatu populasi dan membuat keputusan berbasis data (data-driven).
 
-Tim kami merancang produk ini murni sebagai solusi **"Painkiller"**, bukan sekadar "Vitamin". MindTrack langsung menyerang akar permasalahan: keterlambatan deteksi akibat mahalnya biaya pemeriksaan. Kami menggunakan model *TensorFlow Functional API* yang telah diperkuat dengan *Custom Attention Layer* untuk menyoroti faktor gaya hidup yang paling fatal, sehingga akurasi prediksi dapat terjaga sangat tinggi (>92%). Dengan desain microservices terpisah (Vite React, Express.js, FastAPI, Streamlit), produk ini sudah teruji kelayakannya untuk langsung digunakan oleh pengguna akhir.
+Tim kami merancang produk ini murni sebagai solusi **"Painkiller"**, bukan sekadar "Vitamin". MindTrack langsung menyerang akar permasalahan: keterlambatan deteksi akibat mahalnya biaya pemeriksaan. Kami menggunakan model *TensorFlow Functional API* yang telah diperkuat dengan *Custom Attention Layer* untuk menyoroti faktor gaya hidup yang paling fatal, sehingga akurasi prediksi dapat terjaga sangat tinggi (>92%). Selain itu, kami juga menanamkan inovasi **Generative AI Consultant** yang ditenagai oleh model Large Language Model (LLM) DeepSeek V4 untuk memberikan analisis terapi terpersonalisasi pasca-deteksi. Dengan desain microservices terpisah (Vite React, Express.js, FastAPI, Streamlit, OpenRouter API), produk ini sudah teruji kelayakannya untuk langsung digunakan oleh pengguna akhir.
 
 ## 3. Status Penyelesaian Proyek
 ✅ 100% Selesai berdasarkan Rencana Proyek
@@ -72,6 +72,7 @@ Tim kami merancang produk ini murni sebagai solusi **"Painkiller"**, bukan sekad
 **Artificial Intelligence**
 ✅ REST API mandiri dengan FastAPI Python beserta Uvicorn *server*.
 ✅ Model mencetak rekor performa yang melampaui kriteria (Akurasi validasi menyentuh 92.00%). Kami memprioritaskan arsitektur bebas *dropout* dan perhitungan *Categorical Crossentropy* guna meminimalkan margin kesalahan semaksimal mungkin (mendekati MAE terendah yang bisa dicapai dataset).
+✅ **[INNOVASI BARU]** Mengintegrasikan fitur Chatbot Konsultan Generative AI menggunakan model mutakhir DeepSeek V4 via OpenRouter API. Chatbot ini mampu membaca status riwayat deteksi pengguna (*Context Chaining*) dan melakukan proses *Reasoning* (berpikir) untuk merumuskan saran gaya hidup medis yang hiper-personal.
 
 **Data Science**
 ✅ Feature engineering yang diekstrak secara spesifik (Pemecahan format `Systolic/Diastolic Blood Pressure`).
@@ -111,9 +112,10 @@ Sudah ada aplikasi sejenis seperti *Flo* atau aplikasi kesehatan bawaan *smartwa
 - Platform Web Fullstack responsif lengkap dengan sistem Autentikasi dan riwayat histori deteksi.
 - Dashboard Analytics (Streamlit) yang mensegmentasikan tingkat stres pekerja berdasarkan demografi.
 - AI Model berakurasi `92.00%` yang dibekali dengan *Attention Layer* khusus untuk menangkap anomali durasi tidur.
+- Fitur "Generative AI Consultant" interaktif sebagai pendamping terapi pemulihan yang mampu mengingat histori asesmen pengguna (Memory Retention).
 
 **E. Mengapa Memilih Implementasi Tersebut?**
-Arsitektur *Microservices* dipilih agar tim bisa berkolaborasi secara terpisah. Vite mempercepat rendering komponen UI, Express.js dan SQLite menjamin penyimpanan histori pengguna yang ringan tanpa konfigurasi *cloud database* yang rumit, dan FastAPI memberikan kecepatan latensi di bawah milidetik untuk *machine learning model*.
+Arsitektur *Microservices* dipilih agar tim bisa berkolaborasi secara terpisah. Vite mempercepat rendering komponen UI, Express.js dan SQLite menjamin penyimpanan histori pengguna yang ringan tanpa konfigurasi *cloud database* yang rumit, dan FastAPI memberikan kecepatan latensi di bawah milidetik untuk *machine learning model*. Pemanfaatan OpenRouter API (DeepSeek LLM) juga memfasilitasi fungsionalitas Generative AI dengan biaya sangat rendah namun memberikan *value* produk berlipat ganda layaknya berhadapan dengan psikiater asli.
 
 **F. Dokumentasi**
 File README.md yang menyeluruh telah disiapkan di GitHub. Mencakup cara meng-*install* dependensi untuk setiap bahasa pemrograman, format *environment variables* yang dibutuhkan, dan cara menjalankan ketiga server (Web, AI, Dashboard) secara simultan melalui perintah CLI lokal.
@@ -135,6 +137,7 @@ Sebagai ekspansi strategis, MindTrack dirancang untuk dipasarkan dengan skema B2
 *   Menggunakan pendekatan *Lifestyle Assessment* (Non-invasif), sangat ramah bagi orang awam.
 *   Akurasi prediktif Model AI luar biasa tinggi mencapai 92.00% ditunjang dengan fitur *Soft-Attention*.
 *   Mampu menyajikan *Breakdown Probability* sehingga pengguna tahu tingkat keparahannya (Low, Medium, High).
+*   Dilengkapi inovasi Generative AI Consultant yang dapat menjadi nilai jual komersial tinggi.
 
 **Kelemahan (Weaknesses):**
 *   Dataset acuan saat ini berjumlah relatif kecil (kurang dari 500 sampel), yang mungkin belum merepresentasikan populasi seluruh wilayah secara komprehensif.

@@ -1,10 +1,233 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import OpenAI from 'openai';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Radar, RadarChart, PolarGrid, PolarAngleAxis } from "recharts";
 import toast, { Toaster } from "react-hot-toast";
 import { BackgroundBeams } from "../components/ui/BackgroundBeams";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+const openaiClient = new OpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: import.meta.env.VITE_OPENROUTER_API_KEY,
+  dangerouslyAllowBrowser: true
+});
+
+function AIConsultantChat({ result, formData, onClear }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const lastProcessedResultStr = useRef(null);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
+
+  // Load dari LocalStorage saat pertama kali render
+  useEffect(() => {
+    const saved = localStorage.getItem('mindtrack_ai_chat');
+    if (saved) {
+      try { setMessages(JSON.parse(saved)); } catch(e){}
+    }
+  }, []);
+
+  // Simpan ke LocalStorage tiap kali ada perubahan chat
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('mindtrack_ai_chat', JSON.stringify(messages));
+    }
+  }, [messages]);
+
+  // Handle hasil asesmen baru
+  useEffect(() => {
+    if (!result) return;
+    
+    // Cegah re-trigger untuk hasil yang sama persis
+    const resultStr = JSON.stringify(result) + JSON.stringify(formData);
+    if (lastProcessedResultStr.current === resultStr) return;
+    lastProcessedResultStr.current = resultStr;
+
+    const runAnalysis = async () => {
+      setLoading(true);
+      
+      // Ambil state terbaru dari localstorage (jika ada) untuk menghindari race condition
+      const saved = localStorage.getItem('mindtrack_ai_chat');
+      const currentMessages = saved ? JSON.parse(saved) : messages;
+      const isContinuation = currentMessages.length > 0;
+      
+      const promptContent = isContinuation 
+        ? `[Sistem: Update Data Medis Baru] Pasien baru saja men-submit tes ulang. Vitals terbaru: Usia ${formData.age}, Tidur ${formData.sleep_duration} jam, Fisik ${formData.physical_activity} menit, HR ${formData.heart_rate} BPM, Stres ${formData.stress_level}/10. Hasil prediksi terbaru: ${result.predicted_disorder}. Tolong berikan analisis singkat terkait perkembangan dari kondisi obrolan sebelumnya, lalu berikan saran terupdate. Jangan ulangi perkenalan panjang.`
+        : `Halo AI, saya baru saja melakukan tes kesehatan. Data saya: Usia ${formData.age}, Tidur ${formData.sleep_duration} jam, Aktivitas Fisik ${formData.physical_activity} menit, Resting HR ${formData.heart_rate} BPM, Skala Stres ${formData.stress_level}/10. Hasil klasifikasi dari model Deep Learning adalah: ${result.predicted_disorder}. Tolong berikan analisis singkat mengapa saya bisa terindikasi kondisi tersebut berdasarkan data saya, lalu berikan 2-3 saran praktis (Gunakan bahasa Indonesia yang empatik, profesional, dan to-the-point).`;
+
+      const systemMsg = { role: 'user', content: promptContent };
+      const conversationContext = [...currentMessages, systemMsg];
+      
+      // Update state UI langsung agar prompt user terlihat
+      setMessages(conversationContext);
+      
+      try {
+        const apiResponse = await openaiClient.chat.completions.create({
+          model: 'deepseek/deepseek-chat', 
+          messages: conversationContext
+        });
+        
+        const response = apiResponse.choices[0].message;
+        setMessages([...conversationContext, { 
+          role: 'assistant', 
+          content: response.content,
+          reasoning_details: response.reasoning_details 
+        }]);
+      } catch (e) {
+        console.error(e);
+        try {
+            const apiResponse2 = await openaiClient.chat.completions.create({
+              model: 'deepseek/deepseek-v4-flash',
+              messages: conversationContext,
+              reasoning: { enabled: true }
+            });
+            const response2 = apiResponse2.choices[0].message;
+            setMessages([...conversationContext, { role: 'assistant', content: response2.content }]);
+        } catch (err2) {
+            setMessages([...conversationContext, { role: 'assistant', content: "Maaf, koneksi ke Generative AI sedang mengalami gangguan." }]);
+        }
+      }
+      setLoading(false);
+    };
+    
+    runAnalysis();
+  }, [result]); // Hanya trigger saat result berubah (user mensubmit form)
+
+  const clearChat = () => {
+    if (window.confirm("Hapus seluruh riwayat obrolan dengan konsultan AI?")) {
+      setMessages([]);
+      localStorage.removeItem('mindtrack_ai_chat');
+      lastProcessedResultStr.current = null;
+      if (onClear) onClear();
+    }
+  };
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!input.trim() || loading) return;
+    
+    const userMsg = { role: 'user', content: input };
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
+    setInput('');
+    setLoading(true);
+    
+    try {
+      const apiResponse = await openaiClient.chat.completions.create({
+        model: 'deepseek/deepseek-v4-flash',
+        messages: newMessages.map(m => ({
+          role: m.role,
+          content: m.content,
+          reasoning_details: m.reasoning_details
+        })),
+        reasoning: { enabled: true }
+      });
+      const response = apiResponse.choices[0].message;
+      setMessages([...newMessages, { 
+        role: 'assistant', 
+        content: response.content,
+        reasoning_details: response.reasoning_details 
+      }]);
+    } catch (e) {
+      console.error(e);
+      // Fallback
+      try {
+          const apiResponse = await openaiClient.chat.completions.create({
+            model: 'deepseek/deepseek-chat',
+            messages: newMessages.map(m => ({ role: m.role, content: m.content }))
+          });
+          const response = apiResponse.choices[0].message;
+          setMessages([...newMessages, { role: 'assistant', content: response.content }]);
+      } catch (err) {
+          setMessages([...newMessages, { role: 'assistant', content: "Gagal membalas pesan. Coba lagi." }]);
+      }
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="flex flex-col h-[500px] w-full border border-slate-200 rounded-2xl overflow-hidden bg-white mt-8 shadow-md">
+      <div className="bg-gradient-to-r from-teal-600 to-emerald-500 text-white p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+           <div className="bg-white/20 p-2 rounded-full text-xl leading-none">🤖</div>
+           <div>
+             <h4 className="font-black text-sm drop-shadow-sm leading-tight">MindTrack Generative AI</h4>
+             <p className="text-[10px] text-teal-100 font-medium">Asisten Konsultan Kesehatan Pribadi</p>
+           </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={clearChat} title="Hapus seluruh riwayat obrolan AI" className="text-[10px] bg-white/20 hover:bg-rose-500/80 backdrop-blur-sm border border-white/30 px-3 py-1.5 rounded-full font-bold shadow-inner transition-colors cursor-pointer">🗑️ Hapus Chat</button>
+          <span className="text-[10px] bg-teal-800/50 backdrop-blur-sm border border-teal-400/30 px-3 py-1.5 rounded-full font-bold shadow-inner hidden md:block">Powered by DeepSeek</span>
+        </div>
+      </div>
+      
+      <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-slate-50/50">
+        {messages.map((msg, idx) => {
+          if (idx === 0) return null; // Sembunyikan prompt awal
+          return (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+              <div className={`p-4 md:p-5 rounded-2xl max-w-[90%] md:max-w-[80%] text-sm shadow-sm leading-relaxed ${msg.role === 'user' ? 'bg-teal-600 text-white rounded-br-none ml-auto' : 'bg-white border border-slate-200 text-slate-700 rounded-bl-none mr-auto'}`}>
+                 {msg.role === 'user' ? (
+                   <div className="whitespace-pre-wrap">{msg.content}</div>
+                 ) : (
+                   <ReactMarkdown 
+                     remarkPlugins={[remarkGfm]}
+                     components={{
+                       p: ({node, ...props}) => <p className="mb-3 last:mb-0" {...props} />,
+                       strong: ({node, ...props}) => <strong className="font-bold text-slate-900" {...props} />,
+                       ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-3 space-y-1" {...props} />,
+                       ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-3 space-y-1" {...props} />,
+                       li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                       h1: ({node, ...props}) => <h1 className="text-base font-black text-teal-800 mb-2 mt-4 first:mt-0" {...props} />,
+                       h2: ({node, ...props}) => <h2 className="text-sm font-bold text-teal-700 mb-2 mt-3 first:mt-0" {...props} />,
+                       h3: ({node, ...props}) => <h3 className="text-sm font-bold text-teal-600 mb-2 mt-2 first:mt-0" {...props} />,
+                       a: ({node, ...props}) => <a className="text-teal-600 hover:underline font-medium" {...props} />
+                     }}
+                   >
+                     {msg.content}
+                   </ReactMarkdown>
+                 )}
+              </div>
+            </motion.div>
+          )
+        })}
+        {loading && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start">
+             <div className="bg-white border border-slate-200 text-slate-400 text-xs font-medium italic p-4 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
+                <span className="animate-spin text-lg">⚙️</span> AI sedang menganalisis data (Reasoning)... 
+             </div>
+          </motion.div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      <form onSubmit={handleSend} className="p-4 bg-white border-t border-slate-200 flex gap-3 items-center">
+        <input 
+          type="text" 
+          value={input} 
+          onChange={(e) => setInput(e.target.value)} 
+          placeholder="Tanyakan detail kondisi Anda ke AI..." 
+          className="flex-1 bg-slate-100/80 border border-slate-200 rounded-full px-5 py-3 text-sm focus:outline-none focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/10 transition-all text-slate-700"
+        />
+        <button type="submit" disabled={loading} className="bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-white px-6 py-3 rounded-full text-sm font-bold shadow-md shadow-teal-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+          <span>Kirim</span>
+          <span>✈️</span>
+        </button>
+      </form>
+    </div>
+  );
+}
 
 export function Dashboard({ token }) {
   const [formData, setFormData] = useState({ gender: '0', age: '', sleep_duration: '', physical_activity: '', heart_rate: '', daily_steps: '', stress_level: '5' });
@@ -12,6 +235,19 @@ export function Dashboard({ token }) {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
   const [activeTab, setActiveTab] = useState('assessment');
+  const [hasAIChat, setHasAIChat] = useState(false);
+
+  useEffect(() => {
+    // Cek apakah ada riwayat chat di localstorage saat mount
+    const saved = localStorage.getItem('mindtrack_ai_chat');
+    if (saved && JSON.parse(saved).length > 0) {
+      setHasAIChat(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (result) setHasAIChat(true);
+  }, [result]);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -247,10 +483,18 @@ export function Dashboard({ token }) {
                            <p className="text-xs font-bold text-slate-600">TF Deep Learning L1</p>
                         </div>
                       </div>
+                      {/* COMPONENT GENERATIVE AI SEKARANG DILETAKKAN DI LUAR RESULT BOX, BERADA DI BAWAH GRID */}
                     </motion.div>
                   )}
                 </div>
               </div>
+
+              {/* GENERATIVE AI CHAT COMPONENT DIPINDAHKAN KE SINI (FULL WIDTH) */}
+              {hasAIChat && (
+                <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="w-full mt-6">
+                  <AIConsultantChat result={result} formData={formData} onClear={() => setHasAIChat(false)} />
+                </motion.div>
+              )}
             </motion.div>
           ) : (
             <motion.div key="history" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">

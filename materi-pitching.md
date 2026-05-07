@@ -54,12 +54,12 @@ Berikut adalah panduan slide dan naskah bicara (script) agar presentasi terstruk
 ## 🔵 SLIDE 11 & 12: Demo Produk & Penutup (Waktu: 7:30 - 9:30)
 **Speaker: Agung Permana (Full-Stack Web Developer)**
 
-*   **Konten Slide:** Video Screen-record Aplikasi (Screencast), Link GitHub & Dokumentasi.
+*   **Konten Slide:** Video Screen-record Aplikasi (Screencast) menampilkan hasil prediksi dan kotak chat Generative AI Consultant, Link GitHub & Dokumentasi.
 *   **Draft Naskah:**
     > *(Sambil memutar video demo di slide)*
-    > "Mari kita lihat demonya. Pengguna cukup login, lalu mengisi form gaya hidup hariannya. Saat menekan tombol 'Analisis', request dikirim ke backend dan diproses oleh AI kami dalam hitungan detik. Hasilnya keluar berupa persentase probabilitas, sehingga pengguna tahu tindakan medis apa yang harus diambil selanjutnya.
+    > "Mari kita lihat demonya. Pengguna mengisi form gaya hidup, dan hasil prediksi dari Deep Learning kami akan keluar seketika. Namun, kami tidak berhenti di situ. Kami juga mengintegrasikan **Generative AI Consultant** berbasis LLM DeepSeek V4. Begitu hasil prediksi keluar, AI Consultant akan membaca data Anda dan langsung memberikan terapi yang dipersonalisasi secara otomatis. Pengguna juga bisa membalas chatnya layaknya berkonsultasi dengan dokter sungguhan yang mengingat histori Anda!
     > 
-    > Seluruh baris kode, dokumentasi README, dan tautan *deployment* Vercel/Render telah kami publikasikan di repositori GitHub kami. Sekian presentasi dari Tim CC26-PSU264. MindTrack: Pantau Pikiranmu, Lindungi Masa Depanmu. Terima Kasih."
+    > Seluruh baris kode dan tautan *deployment* telah kami publikasikan di repositori GitHub kami. Sekian presentasi dari Tim CC26-PSU264. MindTrack: Pantau Pikiranmu, Lindungi Masa Depanmu. Terima Kasih."
 
 ---
 
