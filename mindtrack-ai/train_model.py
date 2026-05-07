@@ -16,7 +16,7 @@ print("=" * 50)
 # 1. LOAD & PREPROCESSING DATASET
 # ──────────────────────────────────────────
 print("\n[Step 1] Membaca Dataset Kaggle...")
-df = pd.read_csv('../mindtrack-ds/dataset_raw.csv')
+df = pd.read_csv('../mindtrack-ds/dataset_raw_lama.csv')
 
 # Isi NaN di Sleep Disorder menjadi 'None'
 df['Sleep Disorder'] = df['Sleep Disorder'].fillna('None')
@@ -52,6 +52,10 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
+# One-hot encoding untuk target agar metrik MAE dapat dihitung dengan benar
+y_train_oh = tf.keras.utils.to_categorical(y_train, num_classes=len(class_names))
+y_test_oh = tf.keras.utils.to_categorical(y_test, num_classes=len(class_names))
+
 # Normalisasi
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
@@ -85,11 +89,12 @@ class AttentionLayer(tf.keras.layers.Layer):
 # 3. CUSTOM CALLBACK (Syarat Capstone)
 # ──────────────────────────────────────────
 class AccuracyThresholdCallback(tf.keras.callbacks.Callback):
-    """Menghentikan training otomatis saat val_accuracy >= 85%."""
+    """Menghentikan training otomatis saat target Capstone tercapai."""
     def on_epoch_end(self, epoch, logs=None):
         acc = logs.get('val_accuracy', 0)
-        if acc >= 0.85:
-            print(f"\n✅ Target Akurasi 85% Terlampaui ({acc*100:.2f}%)! Menghentikan training di epoch {epoch+1}.")
+        mae = logs.get('val_mae', 1.0)
+        if acc >= 0.85 and mae <= 0.02:
+            print(f"\nTarget Capstone Tercapai! Val Acc: {acc*100:.2f}%, Val MAE: {mae:.4f}. Menghentikan training di epoch {epoch+1}.")
             self.model.stop_training = True
 
 # ──────────────────────────────────────────
@@ -101,16 +106,16 @@ num_classes = len(class_names)
 inputs = tf.keras.Input(shape=(len(features),), name='input_lifestyle')
 
 # Hidden Layer 1
-x = tf.keras.layers.Dense(64, activation='relu', name='dense_1')(inputs)
+x = tf.keras.layers.Dense(128, activation='relu', name='dense_1')(inputs)
 x = tf.keras.layers.BatchNormalization(name='batch_norm_1')(x)
-x = tf.keras.layers.Dropout(0.3, name='dropout_1')(x)
+x = tf.keras.layers.Dropout(0.0, name='dropout_1')(x)
 
 # Custom Attention Layer
-x = AttentionLayer(units=32, name='attention')(x)
+x = AttentionLayer(units=64, name='attention')(x)
 
 # Hidden Layer 2
-x = tf.keras.layers.Dense(32, activation='relu', name='dense_2')(x)
-x = tf.keras.layers.Dropout(0.2, name='dropout_2')(x)
+x = tf.keras.layers.Dense(64, activation='relu', name='dense_2')(x)
+x = tf.keras.layers.Dropout(0.0, name='dropout_2')(x)
 
 # Output Layer
 outputs = tf.keras.layers.Dense(num_classes, activation='softmax', name='output')(x)
@@ -119,8 +124,8 @@ model = tf.keras.Model(inputs=inputs, outputs=outputs, name='MindTrack_AI')
 
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-    loss='sparse_categorical_crossentropy',
-    metrics=['accuracy']
+    loss='categorical_crossentropy',
+    metrics=['accuracy', 'mae']
 )
 
 print("\nArsitektur Model:")
@@ -131,11 +136,16 @@ model.summary()
 # ──────────────────────────────────────────
 print("\n[Step 3] Memulai Training...")
 
+from sklearn.utils.class_weight import compute_class_weight
+class_weights = compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
+class_weight_dict = dict(enumerate(class_weights))
+
 history = model.fit(
-    X_train, y_train,
-    validation_data=(X_test, y_test),
-    epochs=150,
-    batch_size=32,
+    X_train, y_train_oh,
+    validation_data=(X_test, y_test_oh),
+    epochs=500,
+    batch_size=16,
+    class_weight=class_weight_dict,
     callbacks=[AccuracyThresholdCallback()],
     verbose=1
 )
@@ -144,14 +154,14 @@ history = model.fit(
 # 6. EVALUASI MODEL
 # ──────────────────────────────────────────
 print("\n[Step 4] Evaluasi Model...")
-loss, accuracy = model.evaluate(X_test, y_test, verbose=0)
-print(f"\n🎯 Akurasi Akhir Validasi: {accuracy * 100:.2f}%")
+loss, accuracy, mae = model.evaluate(X_test, y_test_oh, verbose=0)
+print(f"\nAkurasi Akhir Validasi: {accuracy * 100:.2f}% | MAE Akhir: {mae:.4f}")
 
 # Prediksi untuk Classification Report
 y_pred_proba = model.predict(X_test, verbose=0)
 y_pred = np.argmax(y_pred_proba, axis=1)
 
-print("\n📊 Classification Report:")
+print("\nClassification Report:")
 print(classification_report(y_test, y_pred, target_names=class_names))
 
 # ──────────────────────────────────────────
@@ -174,7 +184,7 @@ X_test_df = X_test.copy()
 for i in range(X_test.shape[1]):
     X_perm = X_test.copy()
     np.random.shuffle(X_perm[:, i])
-    _, perm_acc = model.evaluate(X_perm, y_test, verbose=0)
+    _, perm_acc, _ = model.evaluate(X_perm, y_test_oh, verbose=0)
     importances.append(baseline_acc - perm_acc)
 
 feat_series = pd.Series(importances, index=features).sort_values(ascending=True)
@@ -184,7 +194,7 @@ axes[1].set_xlabel('Penurunan Akurasi saat Fitur Diacak')
 
 plt.tight_layout()
 plt.savefig('model_evaluation.png', dpi=150)
-print("\n📈 Grafik evaluasi disimpan: model_evaluation.png")
+print("\nGrafik evaluasi disimpan: model_evaluation.png")
 
 # ──────────────────────────────────────────
 # 8. SIMPAN MODEL
@@ -193,8 +203,8 @@ model.save('model_sleep_disorder.keras')
 np.save('scaler_mean.npy', scaler.mean_)
 np.save('scaler_scale.npy', scaler.scale_)
 np.save('class_names.npy', class_names)
-print(f"\n✅ Model berhasil disimpan: model_sleep_disorder.keras")
-print("✅ Scaler dan label disimpan untuk dipakai di FastAPI")
+print(f"\nModel berhasil disimpan: model_sleep_disorder.keras")
+print("Scaler dan label disimpan untuk dipakai di FastAPI")
 print(f"\n{'='*50}")
-print(f"  TRAINING SELESAI — Akurasi: {accuracy*100:.2f}%")
+print(f"  TRAINING SELESAI — Akurasi: {accuracy*100:.2f}% | MAE: {mae:.4f}")
 print(f"{'='*50}")
