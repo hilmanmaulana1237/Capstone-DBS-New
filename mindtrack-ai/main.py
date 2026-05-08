@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 import tensorflow as tf
 import os
+from pathlib import Path
 
 app = FastAPI(title="MindTrack AI Endpoint")
 
@@ -24,23 +25,25 @@ class PatientData(BaseModel):
     stress_level: int = 5
 
 # Variabel Global untuk menyimpan model & scaler
-MODEL_PATH = 'model_sleep_disorder.keras'
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / 'model_sleep_disorder.keras'
 stress_model = None
 scaler_mean = None
 scaler_scale = None
+class_names = None
 
 # Custom Layer wajb didefinisikan ulang untuk deserialization Keras
 @tf.keras.utils.register_keras_serializable()
 class AttentionLayer(tf.keras.layers.Layer):
     def __init__(self, units=16, **kwargs):
-        super(AttentionLayer, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.units = units
-        self.W = tf.keras.layers.Dense(units, activation='tanh')
-        self.V = tf.keras.layers.Dense(1)
+        self.projection = tf.keras.layers.Dense(units, activation='tanh')
+        self.score = tf.keras.layers.Dense(1)
 
     def call(self, inputs):
-        score = self.V(self.W(inputs))
-        attention_weights = tf.nn.softmax(score, axis=-1)
+        attention_logits = self.score(self.projection(inputs))
+        attention_weights = tf.nn.sigmoid(attention_logits)
         return inputs * attention_weights
     
     def get_config(self):
@@ -51,15 +54,16 @@ class AttentionLayer(tf.keras.layers.Layer):
 # Fungsi untuk meload model TF saat server API di-start
 @app.on_event("startup")
 def load_keras_model():
-    global stress_model, scaler_mean, scaler_scale
+    global stress_model, scaler_mean, scaler_scale, class_names
     if os.path.exists(MODEL_PATH):
         # Menyertakan AttentionLayer ke custom_objects langsung saat meload
-        stress_model = tf.keras.models.load_model(MODEL_PATH, custom_objects={'AttentionLayer': AttentionLayer})
-        scaler_mean = np.load('scaler_mean.npy')
-        scaler_scale = np.load('scaler_scale.npy')
-        print("✅ AI Engine + Scalers Berhasil Terdampar (Loaded)!")
+        stress_model = tf.keras.models.load_model(str(MODEL_PATH), custom_objects={'AttentionLayer': AttentionLayer})
+        scaler_mean = np.load(BASE_DIR / 'scaler_mean.npy')
+        scaler_scale = np.load(BASE_DIR / 'scaler_scale.npy')
+        class_names = np.load(BASE_DIR / 'class_names.npy', allow_pickle=True)
+        print("[OK] AI Engine + Scalers Berhasil Loaded.")
     else:
-        print("⚠️ Peringatan: File model.keras belum ada, hanya mode fallback.")
+        print("[WARN] File model.keras belum ada, hanya mode fallback.")
 
 @app.get("/")
 def home():
@@ -80,12 +84,25 @@ def get_model_info():
 
 @app.post("/predict")
 def predict_risk(data: PatientData):
-    global stress_model, scaler_mean, scaler_scale
+    global stress_model, scaler_mean, scaler_scale, class_names
     
-    # Label dictionary
-    labels = {0: "Normal/Aman", 1: "Risiko Insomnia", 2: "Risiko Sleep Apnea"}
+    def display_label(label):
+        label_text = str(label)
+        if label_text in ["None", "Aman", "Normal"]:
+            return "Normal/Aman"
+        if label_text == "Insomnia":
+            return "Risiko Insomnia"
+        if label_text == "Sleep Apnea":
+            return "Risiko Sleep Apnea"
+        return label_text
+
+    def probability_key(label):
+        label_text = str(label)
+        if label_text in ["None", "Aman", "Normal"]:
+            return "Normal"
+        return label_text.replace(" ", "_")
     
-    if stress_model is not None and scaler_mean is not None:
+    if stress_model is not None and scaler_mean is not None and class_names is not None:
         # Ekstrak data menjadi numpy array input (Sesuai 7 Features)
         raw_input = np.array([[
             data.gender, data.age, data.sleep_duration, 
@@ -97,23 +114,23 @@ def predict_risk(data: PatientData):
         
         predictions = stress_model.predict(normalized_input)[0]
         predicted_class = int(np.argmax(predictions))
+        predicted_label = class_names[predicted_class]
         
         # Formatting probabilities
         prob_breakdown = {
-            "Normal": round(float(predictions[0]) * 100, 2),
-            "Insomnia": round(float(predictions[1]) * 100, 2),
-            "Sleep_Apnea": round(float(predictions[2]) * 100, 2)
+            probability_key(label): round(float(predictions[index]) * 100, 2)
+            for index, label in enumerate(class_names)
         }
         
-        confidence = prob_breakdown[list(prob_breakdown.keys())[predicted_class]]
+        confidence = round(float(predictions[predicted_class]) * 100, 2)
         
         risk_level = "LOW"
-        if predicted_class > 0:
+        if display_label(predicted_label) != "Normal/Aman":
             if confidence > 75: risk_level = "HIGH"
             elif confidence > 50: risk_level = "MEDIUM"
         
         return {
-            "predicted_disorder": labels[predicted_class],
+            "predicted_disorder": display_label(predicted_label),
             "confidence_score": f"{confidence}%",
             "risk_level": risk_level,
             "probabilities": prob_breakdown,
@@ -122,7 +139,7 @@ def predict_risk(data: PatientData):
     else:
         # Dummy Fallback
         return {
-            "predicted_disorder": labels[1] if data.sleep_duration < 6.0 else labels[0], 
+            "predicted_disorder": "Risiko Insomnia" if data.sleep_duration < 6.0 else "Normal/Aman", 
             "confidence_score": "80%",
             "risk_level": "MEDIUM",
             "probabilities": {"Normal": 20.0, "Insomnia": 80.0, "Sleep_Apnea": 0.0},

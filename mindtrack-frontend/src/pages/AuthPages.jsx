@@ -3,8 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BackgroundBeams } from "../components/ui/BackgroundBeams";
 import { Eye, EyeOff, Activity } from "lucide-react";
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { apiClient } from "../utils/apiClient";
 
 const GlassCard = ({ children, title, subtitle }) => (
   <div className="min-h-screen flex items-center justify-center relative bg-slate-50 overflow-hidden px-4 pt-16">
@@ -48,13 +47,7 @@ export function LoginPage({ setToken, setUsername }) {
     e.preventDefault();
     setLoading(true); setError('');
     try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Gagal masuk.");
+      const { data } = await apiClient.post('/api/auth/login', { email, password });
       
       localStorage.setItem('token', data.token);
       localStorage.setItem('username', data.username);
@@ -62,7 +55,7 @@ export function LoginPage({ setToken, setUsername }) {
       setUsername(data.username);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.error || err.message || "Gagal masuk.");
     }
     setLoading(false);
   };
@@ -113,18 +106,12 @@ export function RegisterPage() {
     
     setLoading(true); setError(''); setSuccess('');
     try {
-      const res = await fetch(`${API_URL}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const { data } = await apiClient.post('/api/auth/register', formData);
       
       setSuccess(data.message);
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.error || err.message || "Gagal mendaftar.");
     }
     setLoading(false);
   };

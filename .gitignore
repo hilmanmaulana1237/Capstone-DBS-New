@@ -18,6 +18,10 @@ mindtrack.db
 scaler_mean.npy
 scaler_scale.npy
 class_names.npy
+!mindtrack-ai/model_sleep_disorder.keras
+!mindtrack-ai/scaler_mean.npy
+!mindtrack-ai/scaler_scale.npy
+!mindtrack-ai/class_names.npy
 
 # OS Files
 .DS_Store

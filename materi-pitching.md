@@ -36,11 +36,11 @@ Berikut adalah panduan slide dan naskah bicara (script) agar presentasi terstruk
 ## 🟢 SLIDE 7 & 8: Keunggulan Model AI (Waktu: 4:30 - 6:00)
 **Speaker: Naisila Zia Ulhaq (AI Engineer)**
 
-*   **Konten Slide:** Arsitektur TensorFlow, Angka Akurasi 92%, Confusion Matrix.
+*   **Konten Slide:** Arsitektur TensorFlow, Angka Akurasi 96%, MAE 0.0167, Confusion Matrix.
 *   **Draft Naskah:**
     > "Sebagai otak dari MindTrack, kami mengembangkan model klasifikasi multi-class (Normal, Insomnia, Sleep Apnea) *from scratch* menggunakan TensorFlow Functional API. 
     > 
-    > Kami tidak menggunakan *AutoML*, melainkan merancang arsitektur Deep Learning sendiri dengan mengimplementasikan **Custom Attention Layer**. Layer ini bertugas memberi bobot lebih besar pada input yang paling krusial. Hasilnya? Meskipun dataset cukup *imbalanced*, optimasi yang kami lakukan berhasil mendongkrak performa model hingga mencapai akurasi **92.00%**, melampaui standar kelulusan Capstone."
+    > Kami tidak menggunakan *AutoML*, melainkan merancang arsitektur Deep Learning sendiri dengan mengimplementasikan **Custom Attention Layer** dan custom training loop berbasis `tf.GradientTape`. Hasilnya? Meskipun dataset cukup *imbalanced*, optimasi yang kami lakukan berhasil mendongkrak performa model hingga mencapai akurasi **96.00%** dengan MAE **0.0167**, melampaui standar kelulusan Capstone."
 
 ## 🔵 SLIDE 9 & 10: Arsitektur Tech Stack & Integrasi (Waktu: 6:00 - 7:30)
 **Speaker: Ariel Aziz Bhadrika (Full-Stack Web Developer)**

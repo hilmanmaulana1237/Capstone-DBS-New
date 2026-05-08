@@ -39,7 +39,7 @@ Gunakan panduan (blueprint) di bawah ini untuk menyusun slide Anda di Canva atau
 ## 🧠 SLIDE 5: Keunggulan Kecerdasan Buatan (AI)
 **Tujuan:** Pamer pencapaian teknis AI yang melampaui batas Capstone.
 *   **Teks:**
-    *   **Core AI:** TensorFlow Deep Learning (Akurasi: 92.00%)
+    *   **Core AI:** TensorFlow Deep Learning (Akurasi: 96.00%, MAE: 0.0167)
     *   **Inovasi:** Custom Attention Layer
     *   **Generative AI:** Integrasi LLM DeepSeek V4 (OpenRouter) untuk konsultasi medis adaptif.
 *   **Visual:** Tampilkan gambar *Confusion Matrix* yang membuktikan model akurat, berdampingan dengan logo/ikon chat DeepSeek AI.
@@ -67,7 +67,7 @@ Gunakan panduan (blueprint) di bawah ini untuk menyusun slide Anda di Canva atau
 *   **Teks:**
     *   **Target (3-6 Bulan):** Pilot Project "Employee Wellness Program" dengan HRD Perusahaan.
     *   **SWOT (Singkat):**
-        *   **S:** Model AI tingkat akurasi tinggi (92%).
+        *   **S:** Model AI tingkat akurasi tinggi (96%, MAE 0.0167).
         *   **W:** Butuh ekspansi jumlah dataset.
         *   **O:** Tingginya kepedulian mental health pasca-pandemi.
         *   **T:** Evolusi fitur bawaan *smartwatch*.

@@ -6,8 +6,7 @@ import remarkGfm from 'remark-gfm';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Radar, RadarChart, PolarGrid, PolarAngleAxis } from "recharts";
 import toast, { Toaster } from "react-hot-toast";
 import { BackgroundBeams } from "../components/ui/BackgroundBeams";
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { apiClient, authHeader } from "../utils/apiClient";
 
 const openaiClient = new OpenAI({
   baseURL: 'https://openrouter.ai/api/v1',
@@ -253,8 +252,9 @@ export function Dashboard({ token }) {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/assessments`, { headers: { 'Authorization': `Bearer ${token}` } });
-      const data = await res.json();
+      const { data } = await apiClient.get('/api/assessments', {
+        headers: authHeader(token)
+      });
       setHistory(data);
     } catch (err) { console.error(err); }
   };
@@ -267,18 +267,14 @@ export function Dashboard({ token }) {
     e.preventDefault();
     setLoading(true); setResult(null);
     try {
-      const response = await fetch(`${API_URL}/api/assessments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(formData)
+      const { data } = await apiClient.post('/api/assessments', formData, {
+        headers: authHeader(token)
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Gagal mendapatkan hasil dari Server.");
       setResult(data);
       fetchHistory(); // refresh history immediately
       toast.success("AI Engine Diagnosis Selesai!");
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.error || error.message || "Gagal mendapatkan hasil dari Server.");
     }
     setLoading(false);
   };

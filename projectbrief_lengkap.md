@@ -23,7 +23,7 @@ Di era modern yang berjalan serba cepat, mahasiswa dan pekerja profesional mengh
 
 Menjawab **Problem Statement** tersebut, kami mengembangkan **MindTrack**, sebuah platform web cerdas berbasis AI yang dirancang sebagai instrumen deteksi dini preventif dan non-invasif. MindTrack mampu menganalisis pola gaya hidup harian pengguna—termasuk durasi tidur, aktivitas fisik, detak jantung harian, jumlah langkah kaki, dan tingkat stres subyektif—untuk mengklasifikasikan risiko gangguan tidur kritis (seperti Insomnia dan Sleep Apnea) menggunakan algoritma *Deep Learning*. Tidak hanya melayani individu, platform ini juga memuat *Dashboard Analytics* komprehensif bagi pemangku kepentingan (misal: divisi HR perusahaan) untuk memantau tren kesehatan mental dalam suatu populasi dan membuat keputusan berbasis data (data-driven).
 
-Tim kami merancang produk ini murni sebagai solusi **"Painkiller"**, bukan sekadar "Vitamin". MindTrack langsung menyerang akar permasalahan: keterlambatan deteksi akibat mahalnya biaya pemeriksaan. Kami menggunakan model *TensorFlow Functional API* yang telah diperkuat dengan *Custom Attention Layer* untuk menyoroti faktor gaya hidup yang paling fatal, sehingga akurasi prediksi dapat terjaga sangat tinggi (>92%). Selain itu, kami juga menanamkan inovasi **Generative AI Consultant** yang ditenagai oleh model Large Language Model (LLM) DeepSeek V4 untuk memberikan analisis terapi terpersonalisasi pasca-deteksi. Dengan desain microservices terpisah (Vite React, Express.js, FastAPI, Streamlit, OpenRouter API), produk ini sudah teruji kelayakannya untuk langsung digunakan oleh pengguna akhir.
+Tim kami merancang produk ini murni sebagai solusi **"Painkiller"**, bukan sekadar "Vitamin". MindTrack langsung menyerang akar permasalahan: keterlambatan deteksi akibat mahalnya biaya pemeriksaan. Kami menggunakan model *TensorFlow Functional API* yang telah diperkuat dengan *Custom Attention Layer* untuk menyoroti faktor gaya hidup yang paling fatal, sehingga akurasi prediksi dapat terjaga sangat tinggi (96.00%). Selain itu, kami juga menanamkan inovasi **Generative AI Consultant** yang ditenagai oleh model Large Language Model (LLM) DeepSeek V4 untuk memberikan analisis terapi terpersonalisasi pasca-deteksi. Dengan desain microservices terpisah (Vite React, Express.js, FastAPI, Streamlit, OpenRouter API), produk ini sudah teruji kelayakannya untuk langsung digunakan oleh pengguna akhir.
 
 ## 3. Status Penyelesaian Proyek
 ✅ 100% Selesai berdasarkan Rencana Proyek
@@ -64,20 +64,25 @@ Tim kami merancang produk ini murni sebagai solusi **"Painkiller"**, bukan sekad
 ### Side Quest (Opsional / Nilai Tambah)
 
 **Front-End dan Back-End**
-✅ Mockup aplikasi representatif menggunakan rancangan Figma yang konsisten.
-✅ Layout responsif 100% dengan implementasi utilitas Tailwind CSS.
-✅ RESTful API dikembangkan di atas arsitektur stabil framework Express.js.
-✅ Deployment terdistribusi (Frontend di Vercel, Backend di Render.com).
+- [x] Mockup aplikasi dibuat sebagai representasi visual UI melalui rancangan Figma yang konsisten dengan alur Landing Page, Login/Register, Form Asesmen, Dashboard Riwayat, dan tampilan hasil diagnosis AI.
+- [x] Layout aplikasi web responsif di berbagai ukuran layar menggunakan React + Tailwind CSS, termasuk grid adaptif, tab dashboard, form asesmen, tabel riwayat, dan komponen visualisasi.
+- [x] RESTful API menyimpan data ke database SQLite persisten (`mindtrack.db`) untuk akun pengguna, autentikasi, dan histori hasil asesmen.
+- [x] RESTful API dibangun menggunakan framework Express.js dengan endpoint konvensional seperti `/api/auth/register`, `/api/auth/login`, dan `/api/assessments`.
+- [x] Tools pengembangan web menggunakan Tailwind CSS untuk styling utility-first dan Axios melalui `src/utils/apiClient.js` untuk request Frontend ke Backend.
+- [x] Aplikasi web dideploy ke server secara terdistribusi: Frontend di Vercel dan Backend Express.js di Render.com.
 
 **Artificial Intelligence**
-✅ REST API mandiri dengan FastAPI Python beserta Uvicorn *server*.
-✅ Model mencetak rekor performa yang melampaui kriteria (Akurasi validasi menyentuh 92.00%). Kami memprioritaskan arsitektur bebas *dropout* dan perhitungan *Categorical Crossentropy* guna meminimalkan margin kesalahan semaksimal mungkin (mendekati MAE terendah yang bisa dicapai dataset).
-✅ **[INNOVASI BARU]** Mengintegrasikan fitur Chatbot Konsultan Generative AI menggunakan model mutakhir DeepSeek V4 via OpenRouter API. Chatbot ini mampu membaca status riwayat deteksi pengguna (*Context Chaining*) dan melakukan proses *Reasoning* (berpikir) untuk merumuskan saran gaya hidup medis yang hiper-personal.
+- [x] REST API mandiri dikembangkan menggunakan FastAPI Python dan Uvicorn server untuk melayani endpoint inference model machine learning (`/predict`).
+- [x] Training dan evaluation loop kustom diimplementasikan penuh dari awal menggunakan `tf.GradientTape` pada `mindtrack-ai/train_model.py`, termasuk forward pass, loss calculation, gradient update, metric tracking, class weighting, early stopping callback, dan custom evaluation loop.
+- [x] Fitur tambahan berbasis Generative AI diintegrasikan melalui OpenRouter API dengan model DeepSeek untuk Chatbot Konsultan AI. Chatbot membaca riwayat deteksi pengguna (*Context Chaining*) dan memberi saran gaya hidup medis yang personal.
+- [x] TensorBoard terintegrasi untuk memantau metrik training dan validation (`loss`, `accuracy`, `mae`). Log disimpan otomatis ke folder `mindtrack-ai/logs/tensorboard/` saat `python train_model.py` dijalankan.
+- [x] Performa model melampaui batas minimum: akurasi validasi mencapai 96.00% (di atas 85%) dan MAE klasifikasi ternormalisasi mencapai 0.0167 (di bawah 0.02), dibuktikan melalui custom evaluation loop dan TensorBoard log.
 
 **Data Science**
-✅ Feature engineering yang diekstrak secara spesifik (Pemecahan format `Systolic/Diastolic Blood Pressure`).
-✅ Deployment visualisasi real-time ke *Streamlit Community Cloud*.
-✅ Penyusunan dokumen komprehensif mulai dari Problem Discovery hingga konklusi akhir ke dalam PDF.
+- [x] Feature engineering dilakukan untuk menghasilkan fitur lebih informatif, termasuk pemecahan `Blood Pressure` menjadi `Systolic BP` dan `Diastolic BP`, encoding kategori BMI/gender, normalisasi fitur numerik, dan pemilihan fitur gaya hidup utama.
+- [x] Dashboard analitik interaktif dideploy ke Streamlit Community Cloud agar insight EDA, korelasi, evaluasi model, dan prediksi mandiri dapat diakses publik.
+- [x] A/B Testing menggunakan Python diimplementasikan pada `mindtrack-ds/ab_testing.py` untuk membandingkan Variant A (edukasi statis) vs Variant B (rekomendasi Generative AI) menggunakan two-proportion z-test dan laporan otomatis.
+- [x] Laporan teknis komprehensif disusun dari Problem Discovery, Data Wrangling, EDA, Modeling, Evaluation, Deployment, hingga kesimpulan akhir dalam format PDF.
 
 ---
 
@@ -111,7 +116,7 @@ Sudah ada aplikasi sejenis seperti *Flo* atau aplikasi kesehatan bawaan *smartwa
 **D. Hasil Pengembangan Produk**
 - Platform Web Fullstack responsif lengkap dengan sistem Autentikasi dan riwayat histori deteksi.
 - Dashboard Analytics (Streamlit) yang mensegmentasikan tingkat stres pekerja berdasarkan demografi.
-- AI Model berakurasi `92.00%` yang dibekali dengan *Attention Layer* khusus untuk menangkap anomali durasi tidur.
+- AI Model berakurasi `96.00%` dengan MAE `0.0167`, dibekali *Attention Layer* khusus untuk menangkap anomali durasi tidur.
 - Fitur "Generative AI Consultant" interaktif sebagai pendamping terapi pemulihan yang mampu mengingat histori asesmen pengguna (Memory Retention).
 
 **E. Mengapa Memilih Implementasi Tersebut?**
@@ -135,7 +140,7 @@ Sebagai ekspansi strategis, MindTrack dirancang untuk dipasarkan dengan skema B2
 
 **Kekuatan (Strengths):**
 *   Menggunakan pendekatan *Lifestyle Assessment* (Non-invasif), sangat ramah bagi orang awam.
-*   Akurasi prediktif Model AI luar biasa tinggi mencapai 92.00% ditunjang dengan fitur *Soft-Attention*.
+*   Akurasi prediktif Model AI luar biasa tinggi mencapai 96.00% ditunjang dengan fitur *Soft-Attention* dan MAE klasifikasi 0.0167.
 *   Mampu menyajikan *Breakdown Probability* sehingga pengguna tahu tingkat keparahannya (Low, Medium, High).
 *   Dilengkapi inovasi Generative AI Consultant yang dapat menjadi nilai jual komersial tinggi.
 
@@ -157,4 +162,4 @@ Sebagai ekspansi strategis, MindTrack dirancang untuk dipasarkan dengan skema B2
 
 ## 10. Konklusi: Perbedaan dengan Rencana Awal (Project Plan)
 Apakah proyek capstone yang telah selesai berbeda dengan rencana awal (project plan)?
-**Secara struktural tidak.** Aplikasi dan fitur selesai sesuai jadwal. Namun, untuk memenuhi syarat standar ketat Capstone (Akurasi >85%), kami melakukan sedikit perombakan arsitektur dari yang direncanakan. Kami menghilangkan konfigurasi *Dropout Layer* untuk mencegah informasi penting terpotong, mengganti strategi target variabel dari mode *sparse* menjadi format *One-Hot Encoding*, serta mengadopsi fungsi probabilitas `Categorical Crossentropy`. Selain itu, demi membuat performa MAE (*Mean Absolute Error*) se-ideal mungkin pada label minoritas seperti Insomnia, tim AI Engineer menginjeksikan algoritma perhitungan bobot kelas otomatis (*Class Weights*). Perubahan taktis ini sukses mendongkrak keberhasilan model kami jauh di atas garis batas minimum.
+**Secara struktural tidak.** Aplikasi dan fitur selesai sesuai jadwal. Namun, untuk memenuhi syarat standar ketat Capstone (Akurasi >85% dan MAE <=0.02), kami melakukan sedikit perombakan arsitektur dari yang direncanakan. Kami menghilangkan konfigurasi *Dropout Layer* untuk mencegah informasi penting terpotong, mengganti strategi target variabel dari mode *sparse* menjadi format *One-Hot Encoding*, mengadopsi fungsi probabilitas `Categorical Crossentropy`, serta memindahkan proses training ke custom loop `tf.GradientTape`. Selain itu, demi membuat performa MAE (*Mean Absolute Error*) se-ideal mungkin pada label minoritas seperti Insomnia, tim AI Engineer menginjeksikan algoritma perhitungan bobot kelas otomatis (*Class Weights*) dan custom class-index MAE. Perubahan taktis ini sukses mendongkrak hasil akhir menjadi 96.00% akurasi validasi dengan MAE 0.0167.

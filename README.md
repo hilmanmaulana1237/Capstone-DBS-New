@@ -10,17 +10,17 @@ Proyek ini dibangun sebagai syarat kelulusan **Coding Camp 2026 powered by DBS F
 Aplikasi ini dipecah menjadi 4 kerangka kerja yang berjalan saling terintegrasi:
 
 1. **Frontend (UI/UX Klien)**
-   * **Stack:** React.js, Vite, React Router DOM, Vanilla CSS.
-   * **Tugas:** Menyediakan Form Asesmen gaya hidup, Halaman Login/Register, dan Papan Riwayat (*History*). Semua lalu lintas data API dikomunikasikan secara *asynchronous* ke Back-End utama.
+   * **Stack:** React.js, Vite, React Router DOM, Tailwind CSS, Axios.
+   * **Tugas:** Menyediakan Form Asesmen gaya hidup, Halaman Login/Register, dan Papan Riwayat (*History*). Semua lalu lintas data API dikomunikasikan secara *asynchronous* ke Back-End utama melalui Axios client.
 2. **Backend (Server Pusat & Auth)**
    * **Stack:** Node.js, Express.js, SQLite Persisten, JWT, Bcrypt.
    * **Tugas:** Gerbang utama sistem. Mencatat pengguna ke database `.db` fisik, menerbitkan *Token Authorization*, serta mendistribusikan JSON kalkulasi *(Proxy)* ke mesin AI Python.
 3. **AI Engineer (Inference Service)**
    * **Stack:** Python 3.12, FastAPI, Uvicorn, TensorFlow/Keras.
-   * **Tugas:** Menjalankan otak Artificial Intelligence (Algoritma *Deep Learning Functional API* dengan *Custom Attention Layer* bertingkat) yang siaga melayani *request* `/predict` dan mengembalikan persentase diagnosis.
+   * **Tugas:** Menjalankan otak Artificial Intelligence (Algoritma *Deep Learning Functional API* dengan *Custom Attention Layer*, custom `tf.GradientTape` training/evaluation loop, dan TensorBoard logging) yang siaga melayani *request* `/predict` dan mengembalikan persentase diagnosis.
 4. **Data Science (Eksplorasi Data & Dashboard)**
    * **Stack:** Python, Streamlit, Pandas, Plotly, Seaborn.
-   * **Tugas:** Pusat pembersihan dataset, visualisasi *Exploratory Data Analysis* (korelasi pearson, histogram multi-label), dan mesin wawasan interaktif bagi tenaga medis dan pemangku kepentingan.
+   * **Tugas:** Pusat pembersihan dataset, visualisasi *Exploratory Data Analysis* (korelasi pearson, histogram multi-label), A/B Testing Python, dan mesin wawasan interaktif bagi tenaga medis dan pemangku kepentingan.
 
 ---
 
@@ -60,6 +60,22 @@ Untuk melihat papan analisis statis:
 cd mindtrack-ds
 .\venv\Scripts\activate
 streamlit run app.py
+```
+
+### 5. Training AI + TensorBoard (Opsional)
+Untuk melatih ulang model dengan custom loop dan menghasilkan log TensorBoard:
+```bash
+cd mindtrack-ai
+.\venv\Scripts\activate
+python train_model.py
+tensorboard --logdir logs/tensorboard
+```
+
+### 6. A/B Testing Data Science (Opsional)
+Untuk menjalankan pipeline A/B Testing demo atau data eksperimen nyata:
+```bash
+cd mindtrack-ds
+python ab_testing.py
 ```
 
 ---
