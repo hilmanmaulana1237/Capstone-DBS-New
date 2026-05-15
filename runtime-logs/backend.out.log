@@ -1,0 +1,6 @@
+
+> mindtrack-backend@1.0.0 start
+> node server.js
+
+Backend MindTrack (Versi Aman) menyala di port 3000
+Terhubung ke database persisten secara lokal (mindtrack.db).

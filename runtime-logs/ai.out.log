@@ -1,0 +1,11 @@
+[OK] AI Engine + Scalers Berhasil Loaded.
+INFO:     127.0.0.1:54665 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54666 - "GET /model-info HTTP/1.1" 200 OK
+
+[1m1/1[0m [32m====================[0m[37m[0m [1m0s[0m 100ms/step
+[1m1/1[0m [32m====================[0m[37m[0m [1m0s[0m 116ms/step
+INFO:     127.0.0.1:54684 - "POST /predict HTTP/1.1" 200 OK
+
+[1m1/1[0m [32m====================[0m[37m[0m [1m0s[0m 20ms/step
+[1m1/1[0m [32m====================[0m[37m[0m [1m0s[0m 30ms/step
+INFO:     127.0.0.1:59296 - "POST /predict HTTP/1.1" 200 OK

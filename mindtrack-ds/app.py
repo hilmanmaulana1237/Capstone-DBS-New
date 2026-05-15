@@ -272,7 +272,7 @@ with tab4:
 # ══════════════════════════════
 with tab5:
     st.header("🤖 Analisis Otomatis AI terhadap Dataset")
-    st.write("Sistem mendeteksi narasi langsung dari parameter statistik `dataset_clean.csv` Anda:")
+    st.write("Sistem mendeteksi narasi langsung dari parameter statistik `dataset_clean.csv`:")
     
     # Generate insights based on live data
     avg_sleep = df['Sleep Duration'].mean()
