@@ -151,7 +151,8 @@ app.post('/api/assessments', authenticateToken, apiLimiter, async (req, res) => 
   
   try {
     // 1. Meneruskan data sinkronasi ke API Machine Learning (FastAPI Python)
-    const aiResponse = await fetch('http://127.0.0.1:8000/predict', {
+    const AI_API_URL = process.env.AI_API_URL || 'http://127.0.0.1:8000';
+    const aiResponse = await fetch(`${AI_API_URL}/predict`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
