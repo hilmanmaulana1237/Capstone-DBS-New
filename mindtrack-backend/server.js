@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const JWT_SECRET = 'mindtrack-super-secret-key-2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'mindtrack-super-secret-key-2026';
 
 // Middleware keamanan DDoS/Spam Request (Rate Limit) khusus AI Endpoint
 const apiLimiter = rateLimit({
@@ -69,6 +69,10 @@ const authenticateToken = (req, res, next) => {
     next();
   });
 };
+
+app.get('/', (req, res) => {
+  res.send('Welcome to MindTrack Backend API! The server is running smoothly.');
+});
 
 app.get('/api/health', (req, res) => {
   res.send({ 
