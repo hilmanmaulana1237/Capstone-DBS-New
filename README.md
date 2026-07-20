@@ -1,13 +1,13 @@
 # 🧠 MindTrack Capstone
 
-**MindTrack** adalah platform cerdas *End-to-End* pendeteksi dini risiko kesehatan mental dan gangguan tidur (Sleep Apnea & Insomnia) yang dirancang khusus untuk mahasiswa dan pekerja modern. Aplikasi ini menggunakan teknologi _Deep Learning_ berdasarkan **Sleep Health and Lifestyle Dataset** asli dari Kaggle.
+**MindTrack** adalah platform cerdas *End-to-End* pendeteksi dini risiko kesehatan mental dan gangguan tidur (Sleep Apnea & Insomnia) yang dirancang khusus untuk mahasiswa dan pekerja modern. Aplikasi ini menggunakan teknologi _Deep Learning_ berdasarkan **Sleep Health and Lifestyle Dataset** asli dari kaggle.
 
 Proyek ini dibangun sebagai syarat kelulusan **Coding Camp 2026 powered by DBS Foundation**.
 
 ---
 
 ## 🌟 Arsitektur Sistem (Microservices)
-Aplikasi ini dipecah menjadi 4 kerangka kerja yang berjalan saling terintegrasi:
+Aplikasi ini dibagi menjadi 4 kerangka kerja yang berjalan saling terintegrasi:
 
 1. **Frontend (UI/UX Klien)**
    * **Stack:** React.js, Vite, React Router DOM, Tailwind CSS, Axios.
